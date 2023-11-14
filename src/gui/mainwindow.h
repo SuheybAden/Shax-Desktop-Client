@@ -8,8 +8,8 @@
 #include <QHash>
 #include <QList>
 #include <QColor>
-#include "backend/boardmanager.h"
-#include "backend/gamepiece.h"
+#include "../backend/boardmanager.h"
+#include "../backend/gamepiece.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

@@ -15,10 +15,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Web
 set(TS_FILES shax-desktop-client_so_SO.ts)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        src/main.cpp
+        src/gui/mainwindow.cpp
+        src/gui/mainwindow.h
+        src/gui/mainwindow.ui
         ${TS_FILES}
 )
 
@@ -26,9 +26,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(shax-desktop-client
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        settingswindow.h settingswindow.cpp
-        backend/boardmanager.h backend/boardmanager.cpp
-        backend/gamepiece.h backend/gamepiece.cpp
+        src/gui/settingswindow.h src/gui/settingswindow.cpp
+        src/backend/boardmanager.h src/backend/boardmanager.cpp
+        src/backend/gamepiece.h src/backend/gamepiece.cpp
         images.qrc
     )
 # Define target properties for Android with Qt 6 as:
