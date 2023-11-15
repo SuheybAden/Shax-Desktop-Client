@@ -188,15 +188,21 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event){
 }
 
 
-void MainWindow::gamePieceReleased(QObject *piece){
+void MainWindow::gamePieceReleased(QObject *object){
+    GamePiece *piece = (GamePiece *)object;
+
     if(boardManager->gameState == GameState::FIRST_REMOVAL || boardManager->gameState == GameState::REMOVAL){
-        boardManager->removePiece(((GamePiece *)piece)->ID);
+        boardManager->removePiece(piece->ID);
     }
 
     else if(boardManager->gameState == GameState::MOVEMENT) {
-        QPoint boardPos = sceneToBoard(((GamePiece *)piece)->currentPos);
+        QPoint boardPos = sceneToBoard(piece->currentPos);
+        qDebug() << "Piece moved to" << boardPos;
         if(boardPos != QPoint(-1, -1)){
-            boardManager->movePiece(((GamePiece *)piece)->ID, boardPos.x(), boardPos.y());
+            boardManager->movePiece(piece->ID, boardPos.x(), boardPos.y());
+        }
+        else {
+            piece->movePiece(-1, -1);
         }
     }
 }

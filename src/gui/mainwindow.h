@@ -65,7 +65,7 @@ private:
     // Event handlers
 //    void closeEvent(QCloseEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
-    void gamePieceReleased(QObject *piece);
+    void gamePieceReleased(QObject *object);
     void gameBtnClicked();
     void settingsActionTriggered();
 
