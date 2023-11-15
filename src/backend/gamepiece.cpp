@@ -16,6 +16,8 @@ GamePiece::GamePiece(uint16_t ID, float x, float y, float radius, QColor color)
     this->homePos.rx() = x;
     this->homePos.ry() = y;
 
+    setPos(homePos);
+
     GamePiece::setAcceptTouchEvents(true);
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
@@ -63,7 +65,7 @@ void GamePiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 // ********************************** EVENT HANDLERS ******************************** //
 QVariant GamePiece::itemChange(GraphicsItemChange change, const QVariant &value){
     if (change == QGraphicsItem::ItemPositionChange && scene()){
-        currentPos = this->scenePos();
+        currentPos = value.toPointF();
         qDebug() << "Home: " << homePos << "\t Current: " << currentPos << "\t Value:" << value.toPointF();
     }
 

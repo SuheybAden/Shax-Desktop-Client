@@ -266,7 +266,6 @@ void MainWindow::placePieceResponseHandler(bool success, QString error, uint16_t
 
     // Add the piece to the scene and move it to its home position
     scene->addItem(newPiece);
-    newPiece->movePiece(-1, -1);
 
     // Store the piece for future use
     gamePieces.insert(ID, newPiece);
