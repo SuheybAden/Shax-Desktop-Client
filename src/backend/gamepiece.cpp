@@ -11,10 +11,8 @@ GamePiece::GamePiece(uint16_t ID, float x, float y, float radius, QColor color)
     this->movable = false;
     this->removable = false;
 
-    this->currentPos.rx() = x;
-    this->currentPos.ry() = y;
-    this->homePos.rx() = x;
-    this->homePos.ry() = y;
+    this->currentPos = QPointF(x, y);
+    this->homePos = QPointF(x, y);
 
     setPos(homePos);
 
@@ -78,6 +76,7 @@ void GamePiece::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
 void GamePiece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     emit pieceReleased(this);
+    QGraphicsObject::mouseReleaseEvent(event);
 }
 
 void GamePiece::movePiece(int16_t x, int16_t y){
