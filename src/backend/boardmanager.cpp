@@ -163,12 +163,13 @@ void BoardManager::setState(QString s){
 
 void BoardManager::startGameResponseHandler(QJsonObject &data){
     try {
+        // Load the response values
         bool success = data["success"].toBool();
         QString error = data["error"].toString();
-        waiting = data["waiting"].toBool();
-        playerNum = data["player_num"].toInt();
+        bool isWaiting = data["waiting"].toBool();
+        int num = data["player_num"].toInt();
         QString nextState = data["next_state"].toString();
-        currentTurn = data["next_player"].toInt();
+        int nextPlayer = data["next_player"].toInt();
 
         // Load the adjacent pieces
         QHash<QPoint, QList<QPoint>> adjacentPieces;
@@ -193,14 +194,17 @@ void BoardManager::startGameResponseHandler(QJsonObject &data){
             adjacentPieces.insert(QPoint(x, y), neighborPoints);
         }
 
-        // Update the game state
-        setState(nextState);
-
         // Check if the game started successfully
         if (success)
             running = true;
 
-        emit startGameResponded(success, error, waiting, nextState, currentTurn, adjacentPieces);
+        emit startGameResponded(success, error, isWaiting, nextState, nextPlayer, adjacentPieces);
+
+        // Update the game state
+        setState(nextState);
+        waiting = isWaiting;
+        playerNum = num;
+        currentTurn = nextPlayer;
 
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
@@ -212,9 +216,8 @@ void BoardManager::placePieceResponseHandler(QJsonObject &data){
         // Move-independent parameters
         bool success = data["success"].toBool();
         QString error = data["error"].toString();
-        currentTurn = data["next_player"].toInt();
+        int nextPlayer = data["next_player"].toInt();
         QString nextState = data["next_state"].toString();
-        setState(nextState);
 
         // Placement related parameters
         uint16_t newId = data["new_piece_ID"].toInt();
@@ -226,7 +229,17 @@ void BoardManager::placePieceResponseHandler(QJsonObject &data){
             activePieces.append(piece.toInt());
         }
 
-        emit placePieceResponded(success, error, newId, x, y, nextState, currentTurn, activePieces);
+        // Update the number of pieces
+        if(success) {
+            totalPieces[currentTurn] += 1;
+        }
+
+        // Notify the UI of the move's result
+        emit placePieceResponded(success, error, newId, x, y, nextState, nextPlayer, activePieces);
+
+        // Update the game state
+        setState(nextState);
+        currentTurn = nextPlayer;
 
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
@@ -239,9 +252,8 @@ void BoardManager::removePieceResponseHandler(QJsonObject &data){
         // Move-independent parameters
         bool success = data["success"].toBool();
         QString error = data["error"].toString();
-        currentTurn = data["next_player"].toInt();
+        int nextPlayer = data["next_player"].toInt();
         QString nextState = data["next_state"].toString();
-        setState(nextState);
 
         // Removal related parameters
         uint16_t removed_piece = data["removed_piece"].toInt();
@@ -250,7 +262,17 @@ void BoardManager::removePieceResponseHandler(QJsonObject &data){
             activePieces.append(piece.toInt());
         }
 
-        emit removePieceResponded(success, error, removed_piece, nextState, currentTurn, activePieces);
+        // Update the number of pieces
+        if(success) {
+            totalPieces[(currentTurn + 1) % 2] -= 1;
+        }
+
+        // Notify the UI of the move's result
+        emit removePieceResponded(success, error, removed_piece, nextState, nextPlayer, activePieces);
+
+        // Update the game state
+        setState(nextState);
+        currentTurn = nextPlayer;
 
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
@@ -262,9 +284,8 @@ void BoardManager::movePieceResponseHandler(QJsonObject &data){
         // Move-independent parameters
         bool success = data["success"].toBool();
         QString error = data["error"].toString();
-        currentTurn = data["next_player"].toInt();
+        int nextPlayer = data["next_player"].toInt();
         QString nextState = data["next_state"].toString();
-        setState(nextState);
 
         // Movement related parameters
         uint16_t movedPiece = data["moved_piece"].toInt();
@@ -275,7 +296,13 @@ void BoardManager::movePieceResponseHandler(QJsonObject &data){
             activePieces.append(piece.toInt());
         }
 
-        emit movePieceResponded(success, error, movedPiece, x, y, nextState, currentTurn, activePieces);
+        qDebug() << "Next state:" << nextState << ", Active pieces:" << activePieces;
+
+        emit movePieceResponded(success, error, movedPiece, x, y, nextState, nextPlayer, activePieces);
+
+        // Update the game state
+        setState(nextState);
+        currentTurn = nextPlayer;
 
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";

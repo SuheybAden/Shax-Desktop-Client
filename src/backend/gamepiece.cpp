@@ -64,7 +64,7 @@ void GamePiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 QVariant GamePiece::itemChange(GraphicsItemChange change, const QVariant &value){
     if (change == QGraphicsItem::ItemPositionChange && scene()){
         currentPos = value.toPointF();
-        qDebug() << "Home: " << homePos << "\t Current: " << currentPos << "\t Value:" << value.toPointF();
+//        qDebug() << "Home: " << homePos << "\t Current: " << currentPos << "\t Value:" << value.toPointF();
     }
 
     return QGraphicsObject::itemChange(change, value);

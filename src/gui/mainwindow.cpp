@@ -63,8 +63,8 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
     playerColors[1] = QColor(57, 61, 71);
 
     QPen linesPen(colorBlack, penWidth);
-    QPen nodesPen(QColor(150, 126, 45), penWidth);
-    QBrush brush(QColor(100, 86, 30));
+    QPen nodesPen(QColor(78, 53, 36), 2);
+    QBrush brush(QColor(171, 120, 78));
 
     // Clears all items from the scene
     scene->clear();
@@ -115,6 +115,10 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
             ui->announcementLbl->setText("Opponent's Turn.");
         }
     }
+
+    // Update the count of player tokens
+    ui->p1PiecesLbl->setText(QString::number(boardManager->totalPieces[0]));
+    ui->p2PiecesLbl->setText(QString::number(boardManager->totalPieces[1]));
 
     // Game state related UI updates
     if (nextState == "STOPPED") {
