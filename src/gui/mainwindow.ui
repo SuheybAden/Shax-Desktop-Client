@@ -127,7 +127,8 @@
           <property name="font">
            <font>
             <family>Arial</family>
-            <bold>true</bold>
+            <italic>true</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -140,6 +141,12 @@
         </item>
         <item>
          <widget class="QLabel" name="p1PiecesLbl">
+          <property name="font">
+           <font>
+            <pointsize>15</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>0</string>
           </property>
@@ -160,7 +167,8 @@
           <property name="font">
            <font>
             <family>Arial</family>
-            <bold>true</bold>
+            <italic>true</italic>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -173,6 +181,12 @@
         </item>
         <item>
          <widget class="QLabel" name="p2PiecesLbl">
+          <property name="font">
+           <font>
+            <pointsize>15</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>0</string>
           </property>
@@ -233,7 +247,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">
