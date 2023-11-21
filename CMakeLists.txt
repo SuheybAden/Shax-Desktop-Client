@@ -19,6 +19,9 @@ set(PROJECT_SOURCES
         src/gui/mainwindow.cpp
         src/gui/mainwindow.h
         src/gui/mainwindow.ui
+        src/gui/settingswindow.h
+        src/gui/settingswindow.cpp
+        src/gui/settingswindow.ui
         ${TS_FILES}
 )
 
@@ -26,7 +29,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(shax-desktop-client
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        src/gui/settingswindow.h src/gui/settingswindow.cpp
         src/backend/boardmanager.h src/backend/boardmanager.cpp
         src/backend/gamepiece.h src/backend/gamepiece.cpp
         images.qrc

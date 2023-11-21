@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "settingswindow.h"
 
 #include <QCloseEvent>
 #include <QMessageBox>
@@ -167,9 +168,9 @@ void MainWindow::settingsActionTriggered(){
 
     else {
         qDebug() << "Opened the settings window.\n";
-//        SettingsWindow settingsWindow = SettingsWindow(this->settings);
-//        if (settingsWindow.exec())
-//            qDebug() << "Your settings were saved!\n";
+        SettingsWindow settingsWindow(&(this->settings));
+        if (settingsWindow.exec())
+            qDebug() << "Your settings were saved!\n";
     }
 }
 
