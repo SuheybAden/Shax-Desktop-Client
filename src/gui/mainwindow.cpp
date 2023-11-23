@@ -52,6 +52,7 @@ void MainWindow::connectAll(){
 
     // Connect signals from the board manager
     QObject::connect(boardManager, &BoardManager::connected, this, &MainWindow::connectedToBoard);
+    QObject::connect(boardManager, &BoardManager::connectionError, this, &MainWindow::connectionErrorHandler);
     QObject::connect(boardManager, &BoardManager::startGameResponded, this, &MainWindow::startGameResponseHandler);
     QObject::connect(boardManager, &BoardManager::placePieceResponded, this, &MainWindow::placePieceResponseHandler);
     QObject::connect(boardManager, &BoardManager::removePieceResponded, this, &MainWindow::removePieceResponseHandler);
@@ -215,6 +216,10 @@ void MainWindow::gamePieceReleased(QObject *object){
 // *************************** API RESPONSE HANDLERS ********************** //
 void MainWindow::connectedToBoard(){
     ui->announcementLbl->setText("Connected to Server.");
+}
+
+void MainWindow::connectionErrorHandler(QString error) {
+    QMessageBox::critical(this, "Websocket Error", error);
 }
 
 void MainWindow::startGameResponseHandler(bool success, QString error, bool waiting, QString nextState, uint8_t nextPlayer, QHash<QPoint, QList<QPoint>> adjacentPieces){

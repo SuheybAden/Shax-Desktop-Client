@@ -26,6 +26,7 @@ public:
 public slots:
     // API response handlers
     void connectedToBoard();
+    void connectionErrorHandler(QString error);
     void startGameResponseHandler(bool success, QString error, bool waiting, QString nextState, uint8_t nextPlayer,  QHash<QPoint, QList<QPoint>> adjacentPieces);
     void placePieceResponseHandler(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
     void removePieceResponseHandler(bool success, QString error, uint16_t ID, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);

@@ -85,7 +85,23 @@ void BoardManager::onTextMessageReceived(const QString &msg){
 }
 
 void BoardManager::error(QAbstractSocket::SocketError error){
-    qDebug() << "An error has occured\n";
+    qDebug() << "An error has occured:" << error << "\n";
+
+    // Handles a lost connection
+    if (error == QAbstractSocket::RemoteHostClosedError) {
+        emit connectionError("Lost the connection to the websocket server. Check your connection and try again.");
+    }
+    else if (error == QAbstractSocket::ConnectionRefusedError){
+        emit connectionError("Couldn't connect to the websocket server.");
+    }
+
+    // Create an artificial API response to properly end the game
+    QJsonObject data;
+    data["success"] = true;
+    data["error"] = "";
+    data["winner"] = 0;
+    data["forfeit"] = true;
+    quitGameResponseHandler(data);
 }
 
 
