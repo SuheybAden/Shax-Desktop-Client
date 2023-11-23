@@ -5,11 +5,11 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
-BoardManager::BoardManager(QString url, bool isLocal, QObject *parent)
+BoardManager::BoardManager(QString url, QSettings *settings, QObject *parent)
     : QObject{parent}
 {
     gameState = GameState::STOPPED;
-    this->isLocal = isLocal;
+    this->settings = settings;
 
     // Opens websocket connection to shax server
     this->url = QUrl(url);
@@ -93,10 +93,20 @@ void BoardManager::error(QAbstractSocket::SocketError error){
 void BoardManager::startGame(){
     qDebug() << "Attempting to start a game.";
 
+    QString mode = settings->value("mode", "Local").toString();
+
     // Build the json message
     QJsonObject data;
     data["action"] = "join_game";
-    data["game_type"] = 1;
+    if(mode == "Online") {
+        data["game_type"] = 0;
+    }
+    else if(mode == "Local") {
+        data["game_type"] = 1;
+    }
+    else if(mode == "CPU") {
+        data["game_type"] = 2;
+    }
 
     // Send the message
     sendMessage(data);

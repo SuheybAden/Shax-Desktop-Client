@@ -24,5 +24,5 @@ void SettingsWindow::writeSettings(){
 void SettingsWindow::readSettings(){
     qDebug() << "Reading settings";
     ui->modeComboBox->setCurrentText(settings->value("mode", "Local").toString());
-    ui->urlLineEdit->setText(settings->value("url", "ws://192.168.0.21:8765").toString());
+    ui->urlLineEdit->setText(settings->value("url", "ws://localhost:8765").toString());
 }

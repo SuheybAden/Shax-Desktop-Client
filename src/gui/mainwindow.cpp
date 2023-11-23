@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setScene(scene);
 
     // Init boardManager
-    boardManager = new BoardManager(url, false);
+    boardManager = new BoardManager(url, &settings);
 
     connectAll();
 }
@@ -106,7 +106,7 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
 // ************************* TEXT-RELATED FUNCTIONS ************************ //
 void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString msg, bool waiting){
     // Update the announcement label
-    if (!boardManager->isLocal)
+    if (!(settings.value("mode", "Local") == "Local"))
         ui->announcementLbl->setText("Player " + QString::number(nextPlayer + 1) + "'s Turn.");
     else {
         if (nextPlayer == boardManager->playerNum) {

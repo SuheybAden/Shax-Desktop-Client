@@ -8,6 +8,7 @@
 #include <QPoint>
 #include <QHash>
 #include <QList>
+#include <QSettings>
 
 enum GameState{
     STOPPED,
@@ -21,10 +22,10 @@ class BoardManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit BoardManager(QString url, bool isLocal, QObject *parent = nullptr);
+    explicit BoardManager(QString url, QSettings *settings, QObject *parent = nullptr);
     ~BoardManager();
 
-    bool isLocal = false;
+    QSettings *settings;
     bool running = false;
     bool waiting = false;
     bool status = false;
