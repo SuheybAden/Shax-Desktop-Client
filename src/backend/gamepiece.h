@@ -6,6 +6,8 @@
 #include <QVariant>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsItemAnimation>
+#include <QTimeLine>
 
 
 class GamePiece : public QGraphicsObject
@@ -39,6 +41,10 @@ private:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+    // Animation variables
+    QTimeLine *timer;
+    QGraphicsItemAnimation *animation;
 };
 
 #endif // GAMEPIECE_H

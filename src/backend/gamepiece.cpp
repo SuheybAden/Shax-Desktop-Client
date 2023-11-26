@@ -19,6 +19,14 @@ GamePiece::GamePiece(uint16_t ID, float x, float y, float radius, QColor color)
     GamePiece::setAcceptTouchEvents(true);
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+
+    // Initialize the piece's animation
+    timer = new QTimeLine(300);
+    timer->setFrameRange(0, 100);
+
+    animation = new QGraphicsItemAnimation();
+    animation->setItem(this);
+    animation->setTimeLine(timer);
 }
 
 void GamePiece::activate(bool isMovable){
@@ -85,5 +93,12 @@ void GamePiece::movePiece(int16_t x, int16_t y){
         this->homePos.setY(y);
     }
 
-    setPos(homePos);
+    // Clear the previous animation
+    animation->clear();
+
+    // Set the item's position for different frames
+    animation->setPosAt(0, currentPos);
+    animation->setPosAt(1, homePos);
+
+    timer->start();
 }
