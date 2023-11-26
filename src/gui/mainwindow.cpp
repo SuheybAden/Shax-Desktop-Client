@@ -105,9 +105,9 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
 
 
 // ************************* TEXT-RELATED FUNCTIONS ************************ //
-void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString msg, bool waiting){
+void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting){
     // Update the announcement label
-    if (!(settings.value("mode", "Local") == "Local"))
+    if (settings.value("mode", "Local") == "Local")
         ui->announcementLbl->setText("Player " + QString::number(nextPlayer + 1) + "'s Turn.");
     else {
         if (nextPlayer == boardManager->playerNum) {
@@ -124,13 +124,72 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
 
     // Game state related UI updates
     if (nextState == "STOPPED") {
+        ui->gameStateLbl->setText("Game Stopped");
+        ui->printLbl->setText("");
+
         if (waiting) {
             ui->announcementLbl->setText("Waiting for a game...");
-            ui->printLbl->setText("");
             ui->gameBtn->setText("Quit");
         }
         else {
             ui->gameBtn->setText("Start Game");
+            switch (flag) {
+
+                case 0x0:
+                    break;
+
+                // The player quit from the waiting list
+                case 0x1:
+                    ui->announcementLbl->setText("Exited the waiting list");
+                    break;
+
+                // One of the player's won
+                case 0x2:
+                    if (settings.value("mode", "Local") == "Local")
+                        ui->announcementLbl->setText("Player " + QString::number(boardManager->winner + 1) + " Won!");
+                    else {
+                        if (boardManager->winner == boardManager->playerNum) {
+                            ui->announcementLbl->setText("Your Won!");
+                        }
+                        else {
+                            ui->announcementLbl->setText("You Lost");
+                        }
+                    }
+                    break;
+
+                // One of the player's quit
+                case 0x3:
+                    if (settings.value("mode", "Local") == "Local")
+                        ui->announcementLbl->setText("Player " + QString::number(boardManager->winner + 1) + " Won!");
+                    else {
+                        if (boardManager->winner == boardManager->playerNum) {
+                            ui->announcementLbl->setText("Your Opponent Forfeited");
+                        }
+                        else {
+                            ui->announcementLbl->setText("You Forfeited");
+                        }
+                    }
+                    break;
+
+                // One of the player's disconnected
+                case 0x4:
+                    if (settings.value("mode", "Local") == "Local")
+                        ui->announcementLbl->setText("Lost the connection to the shax api");
+                    else {
+                        if (boardManager->winner == boardManager->playerNum) {
+                            ui->announcementLbl->setText("Your Opponent Disconnected");
+                        }
+                        else {
+                            ui->announcementLbl->setText("You've disconnected from the shax api");
+                        }
+                    }
+                    break;
+
+                // Unkown state
+                default:
+                    ui->announcementLbl->setText("Game ended in an unknown state");
+                    break;
+            }
         }
     }
     else if (nextState == "PLACEMENT"){
@@ -153,7 +212,6 @@ void MainWindow::gameBtnClicked(){
     // Tries to end the game
     if (boardManager->running || boardManager->waiting) {
         boardManager->quitGame();
-        ui->gameBtn->setText("New Game");
     }
 
     // Tries to start a game
@@ -224,7 +282,7 @@ void MainWindow::connectionErrorHandler(QString error) {
 
 void MainWindow::startGameResponseHandler(bool success, QString error, bool waiting, QString nextState, uint8_t nextPlayer, QHash<QPoint, QList<QPoint>> adjacentPieces){
     // Update on screen text
-    updateOnScreenText(nextState, nextPlayer, "", waiting);
+    updateOnScreenText(nextState, nextPlayer, "", 0, waiting);
 
     if (!success) {
         qDebug() << "Error" << error;
@@ -258,7 +316,7 @@ void MainWindow::startGameResponseHandler(bool success, QString error, bool wait
 
 void MainWindow::placePieceResponseHandler(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces){
     // Update on screen text
-    updateOnScreenText(nextState, nextPlayer, "", false);
+    updateOnScreenText(nextState, nextPlayer, "", 0, false);
 
     // Check if the piece placement has been approved
     if (!success) {
@@ -290,7 +348,7 @@ void MainWindow::placePieceResponseHandler(bool success, QString error, uint16_t
 
 void MainWindow::removePieceResponseHandler(bool success, QString error, uint16_t ID, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces){
     // Update on screen text
-    updateOnScreenText(nextState, nextPlayer, "", false);
+    updateOnScreenText(nextState, nextPlayer, "", 0, false);
 
     if (!success){
         qDebug() << "The piece couldn't be moved: " << error;
@@ -309,7 +367,7 @@ void MainWindow::removePieceResponseHandler(bool success, QString error, uint16_
 
 void MainWindow::movePieceResponseHandler(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces){
     // Update on screen text
-    updateOnScreenText(nextState, nextPlayer, "", false);
+    updateOnScreenText(nextState, nextPlayer, "", 0, false);
 
     // Get the piece corresponding to the evaluated piece movement
     GamePiece* piece = gamePieces[ID];
@@ -331,15 +389,16 @@ void MainWindow::movePieceResponseHandler(bool success, QString error, uint16_t 
     highlightPieces(activePieces, nextState == "MOVEMENT");
 }
 
-void MainWindow::quitGameResponseHandler(bool success, QString error, uint8_t winner, bool forfeit, bool waiting){
+void MainWindow::quitGameResponseHandler(bool success, QString error, uint8_t winner, uint8_t flag, bool waiting){
     if (!success) {
         qDebug() << "Couldn't end the game: " << error;
         return;
     }
 
-    if(waiting) scene->clear();
+    updateOnScreenText("STOPPED", boardManager->currentTurn, "", flag, waiting);
 
-    ui->gameBtn->setText("Start Game");
+    // Clear the scene if exiting the waiting list
+    if(flag == 0x1) scene->clear();
 }
 
 // ************************* BOARD-SCENE TRANSLATIONS ********************** //

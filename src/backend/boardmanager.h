@@ -36,6 +36,7 @@ public:
 
     uint8_t gameType = 0;
     uint8_t playerNum = 0;
+    uint8_t winner = 0;
     uint8_t playerTokens[2] = {0, 0};
 
     GameState gameState = GameState::STOPPED;
@@ -60,7 +61,7 @@ signals:
     void placePieceResponded(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
     void removePieceResponded(bool success, QString error, uint16_t ID, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
     void movePieceResponded(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
-    void quitGameResponded(bool success, QString msg, uint8_t winner, bool forfeit, bool waiting);
+    void quitGameResponded(bool success, QString msg, uint8_t winner, uint8_t flag, bool waiting);
 
 private:
     const uint8_t TOTAL_PLAYERS = 2;

@@ -31,7 +31,7 @@ public slots:
     void placePieceResponseHandler(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
     void removePieceResponseHandler(bool success, QString error, uint16_t ID, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
     void movePieceResponseHandler(bool success, QString error, uint16_t ID, uint8_t x, uint8_t y, QString nextState, uint8_t nextPlayer, QList<uint16_t> activePieces);
-    void quitGameResponseHandler(bool success, QString error, uint8_t winner, bool forfeit, bool waiting);
+    void quitGameResponseHandler(bool success, QString error, uint8_t winner, uint8_t flag, bool waiting);
 
 private:
     Ui::MainWindow *ui;
@@ -72,7 +72,7 @@ private:
 
 
     // Update methods
-    void updateOnScreenText(QString nextState, int nextPlayer, QString msg, bool waiting);
+    void updateOnScreenText(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting);
 
     // Board translation methods
     QPoint sceneToBoard(QPointF scenePoint);

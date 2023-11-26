@@ -221,16 +221,19 @@ void BoardManager::startGameResponseHandler(QJsonObject &data){
         }
 
         // Check if the game started successfully
-        if (success)
+        if (success) {
             running = true;
-
-        emit startGameResponded(success, error, isWaiting, nextState, nextPlayer, adjacentPieces);
+            this->totalPieces[0] = 0;
+            this->totalPieces[1] = 0;
+        }
 
         // Update the game state
         setState(nextState);
         waiting = isWaiting;
         playerNum = num;
         currentTurn = nextPlayer;
+
+        emit startGameResponded(success, error, isWaiting, nextState, nextPlayer, adjacentPieces);
 
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
@@ -340,14 +343,15 @@ void BoardManager::quitGameResponseHandler(QJsonObject &data){
         bool success = data["success"].toBool();
         QString error = data["error"].toString();
         uint8_t winner = data["winner"].toInt();
-        bool forfeit = data["forfeit"].toBool();
+        uint8_t flag = data["flag"][0].toInt();
+
+        emit quitGameResponded(success, error, winner, flag, waiting);
 
         if (success){
             running = false;
             waiting = false;
+            this->winner = winner;
         }
-        emit quitGameResponded(success, error, winner, forfeit, waiting);
-
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
     }
