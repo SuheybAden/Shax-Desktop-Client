@@ -49,7 +49,7 @@ private:
 
     // Graphics parameters
     float radius = 15;
-    float penWidth = 5;
+    float penWidth = 3;
     float gridSpacing = 70;
     QColor playerColors[2];
     QColor colorBlack;

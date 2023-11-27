@@ -5,7 +5,7 @@
 GamePiece::GamePiece(uint16_t ID, float x, float y, float radius, QColor color)
 {
     this->ID = ID;
-    this->radius = radius;
+    this->radius = radius * 0.7;
     this->color = color;
 
     this->movable = false;
@@ -47,7 +47,7 @@ void GamePiece::deactivate(){
 
 // ********************************** OVERLOADS *********************************** //
 QRectF GamePiece::boundingRect() const{
-    return QRectF(-radius, -radius/2, radius*2, radius);
+    return QRectF(-radius, -radius, radius*2, radius*2);
 }
 
 void GamePiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
@@ -56,11 +56,12 @@ void GamePiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 //    qDebug() << "Updated piece:" << ID;
 //    qDebug() << "ID: " << ID << ", Movable: " << movable << ", Removable: " << removable;
     if (movable)
-        painter->setPen(QPen(QColor(0,150,0), 2));
+        painter->setPen(QPen(QColor(0,150,0), 3));
     else if (removable)
-        painter->setPen(QPen(QColor(150, 0, 0), 2));
+        painter->setPen(QPen(QColor(150, 0, 0), 3));
     else
-        painter->setPen(QPen(QColor(0,0,0), 2));
+        painter->setPen(QPen(QColor(0,0,0), 1));
+
 
     painter->setBrush(QBrush(color));
 

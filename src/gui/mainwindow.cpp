@@ -61,12 +61,12 @@ void MainWindow::connectAll(){
 }
 
 void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
-    playerColors[0] = QColor(181, 189, 165);
-    playerColors[1] = QColor(57, 61, 71);
+    playerColors[0] = QColor(220, 220, 220); //QColor(181, 189, 165);
+    playerColors[1] = QColor(50, 50, 50); //QColor(57, 61, 71);
 
     QPen linesPen(colorBlack, penWidth);
-    QPen nodesPen(QColor(78, 53, 36), 2);
-    QBrush brush(QColor(171, 120, 78));
+    QPen nodesPen(colorBlack, 2);
+    QBrush brush(QColor(170, 120, 80));
 
     // Clears all items from the scene
     scene->clear();
