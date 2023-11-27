@@ -345,13 +345,14 @@ void BoardManager::quitGameResponseHandler(QJsonObject &data){
         uint8_t winner = data["winner"].toInt();
         uint8_t flag = data["flag"][0].toInt();
 
-        emit quitGameResponded(success, error, winner, flag, waiting);
-
         if (success){
             running = false;
             waiting = false;
             this->winner = winner;
         }
+
+        emit quitGameResponded(success, error, winner, flag, waiting);
+
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
     }
