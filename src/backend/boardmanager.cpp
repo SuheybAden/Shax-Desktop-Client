@@ -5,14 +5,16 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
-BoardManager::BoardManager(QString url, QSettings *settings, QObject *parent)
+BoardManager::BoardManager(QSettings *settings, QObject *parent)
     : QObject{parent}
 {
     gameState = GameState::STOPPED;
     this->settings = settings;
 
     // Opens websocket connection to shax server
-    this->url = QUrl(url);
+    mode = settings->value("mode", "Remote").toString();
+    this->url = QUrl(settings->value("url", "ws://localhost:8765").toString());
+
     websocket.open(url);
     qDebug() << "Opened websocket";
 
@@ -41,6 +43,13 @@ void BoardManager::sendMessage(QJsonObject msg){
         qDebug() << "Not connected to the server yet\n";
 }
 
+void BoardManager::reconnect(){
+    mode = settings->value("mode", "Remote").toString();
+    this->url = QUrl(settings->value("url", "ws://localhost:8765").toString());
+
+    websocket.open(url);
+    qDebug() << "Attempting to reconnect...";
+}
 
 // ******************** JSON HELPER FUNCTIONS ***************************** //
 
@@ -87,29 +96,39 @@ void BoardManager::onTextMessageReceived(const QString &msg){
 void BoardManager::error(QAbstractSocket::SocketError error){
     qDebug() << "An error has occured:" << error << "\n";
 
+    // Create an artificial API response to properly end the current game
+    if (status) {
+        QJsonObject data;
+        data["success"] = true;
+        data["error"] = "";
+        data["winner"] = 0;
+        data["forfeit"] = true;
+        quitGameResponseHandler(data);
+    }
+
+    status = false;
+    running = false;
+    waiting = false;
+
     // Handles a lost connection
     if (error == QAbstractSocket::RemoteHostClosedError) {
         emit connectionError("Lost the connection to the websocket server. Check your connection and try again.");
+
     }
     else if (error == QAbstractSocket::ConnectionRefusedError){
         emit connectionError("Couldn't connect to the websocket server.");
     }
+    else {
+        emit connectionError("An error occured with the connection to the server.");
+    }
 
-    // Create an artificial API response to properly end the game
-    QJsonObject data;
-    data["success"] = true;
-    data["error"] = "";
-    data["winner"] = 0;
-    data["forfeit"] = true;
-    quitGameResponseHandler(data);
+
 }
 
 
 // *************************** GAME MOVES ********************************** //
 void BoardManager::startGame(){
     qDebug() << "Attempting to start a game.";
-
-    QString mode = settings->value("mode", "Local").toString();
 
     // Build the json message
     QJsonObject data;

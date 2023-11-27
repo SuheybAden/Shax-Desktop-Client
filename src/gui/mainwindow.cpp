@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setScene(scene);
 
     // Init boardManager
-    boardManager = new BoardManager(url, &settings);
+    boardManager = new BoardManager(&settings);
 
     connectAll();
 }
@@ -106,6 +106,12 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
 
 // ************************* TEXT-RELATED FUNCTIONS ************************ //
 void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting){
+
+    if (!boardManager->status) {
+        ui->announcementLbl->setText("Not connected to the server");
+        return;
+    }
+
     // Update the announcement label
     if (settings.value("mode", "Local") == "Local")
         ui->announcementLbl->setText("Player " + QString::number(nextPlayer + 1) + "'s Turn.");
@@ -228,8 +234,11 @@ void MainWindow::settingsActionTriggered(){
     else {
         qDebug() << "Opened the settings window.\n";
         SettingsWindow settingsWindow(&(this->settings));
-        if (settingsWindow.exec())
+        if (settingsWindow.exec()){
             qDebug() << "Your settings were saved!\n";
+            ui->announcementLbl->setText("Reconnecting to the server...");
+            boardManager->reconnect();
+        }
     }
 }
 
@@ -277,6 +286,7 @@ void MainWindow::connectedToBoard(){
 }
 
 void MainWindow::connectionErrorHandler(QString error) {
+    ui->announcementLbl->setText("Error connecting to server");
     QMessageBox::critical(this, "Websocket Error", error);
 }
 

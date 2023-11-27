@@ -22,7 +22,7 @@ class BoardManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit BoardManager(QString url, QSettings *settings, QObject *parent = nullptr);
+    explicit BoardManager(QSettings *settings, QObject *parent = nullptr);
     ~BoardManager();
 
     QSettings *settings;
@@ -42,6 +42,7 @@ public:
     GameState gameState = GameState::STOPPED;
     QWebSocket websocket;
     QUrl url;
+    QString mode;
 
 public slots:
     void onConnected();
@@ -53,6 +54,8 @@ public slots:
     void removePiece(uint16_t pieceId);
     void movePiece(uint16_t pieceId, uint8_t x, uint8_t y);
     void quitGame();
+
+    void reconnect();
 
 signals:
     void connected();
