@@ -44,27 +44,12 @@
          <string>Online</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>CPU</string>
+        </property>
+       </item>
       </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>P1's Color:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSpinBox" name="maxPiecesSpinBox"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>P2's Color:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="minPiecesSpinBox"/>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label">

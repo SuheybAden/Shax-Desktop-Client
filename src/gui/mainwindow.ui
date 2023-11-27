@@ -114,7 +114,7 @@
            <number>1</number>
           </property>
           <property name="text">
-           <string>Player 1's Turn</string>
+           <string>Game Stopped</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
