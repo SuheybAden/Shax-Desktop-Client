@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->printLbl->setVisible(false);
+//    ui->printLbl->setVisible(false);
 
     // Hide the game state related UI
     ui->gameStateFrame->hide();
@@ -143,6 +143,10 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
         if (waiting) {
             ui->announcementLbl->setText("Waiting for an opponent...");
             ui->gameBtn->setText("Quit");
+
+            if(boardManager->lobbyKey != 0) {
+                ui->printLbl->setText("Your lobby key is " + QString::number(boardManager->lobbyKey));
+            }
         }
         else {
             ui->gameBtn->setText("New Game");
@@ -350,11 +354,6 @@ void MainWindow::startGameResponseHandler(bool success, QString error, bool wait
     // Closes the game settings frame and shows the game state again
     ui->settingsFrame->hide();
     ui->gameStateFrame->show();
-
-    if (lobbyKey != 0) {
-        QMessageBox::information(this, "Lobby Key", "Your Lobby Key is " + QString::number(lobbyKey));
-        qDebug() << "Your Lobby Key is" << lobbyKey;
-    }
 
     if (waiting) {
         QMovie *movie = new QMovie(loadingGifPath);

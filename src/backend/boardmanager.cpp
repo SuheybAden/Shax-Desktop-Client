@@ -261,6 +261,7 @@ void BoardManager::startGameResponseHandler(QJsonObject &data){
         waiting = isWaiting;
         playerNum = num;
         currentTurn = nextPlayer;
+        this->lobbyKey = lobbyKey;
 
         emit startGameResponded(success, error, isWaiting, lobbyKey, nextState, nextPlayer, adjacentPieces);
 

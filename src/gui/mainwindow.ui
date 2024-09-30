@@ -50,16 +50,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="printLbl">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QGraphicsView" name="graphicsView">
           <property name="mouseTracking">
            <bool>true</bool>
@@ -81,6 +71,16 @@
           </property>
           <property name="dragMode">
            <enum>QGraphicsView::NoDrag</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="printLbl">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
