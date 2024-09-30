@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->printLbl->setVisible(false);
+
+    // Hide the game state related UI
+    ui->gameStateFrame->hide();
 
     // Load settings values
     marginOfError = settings.value("marginOfError", 0.2).toFloat();
@@ -48,6 +52,9 @@ MainWindow::~MainWindow()
 void MainWindow::connectAll(){
     // Connect signals from UI elements
     QObject::connect(ui->gameBtn, &QPushButton::clicked, this, &MainWindow::gameBtnClicked);
+    QObject::connect(ui->joinLobbyBtn, &QPushButton::clicked, this, &MainWindow::joinLobbyBtnClicked);
+    QObject::connect(ui->createLobbyBtn, &QPushButton::clicked, this, &MainWindow::createLobbyBtnClicked);
+    QObject::connect(ui->findGameBtn, &QPushButton::clicked, this, &MainWindow::findGameBtnClicked);
     QObject::connect(ui->settingsAction, &QAction::triggered, this, &MainWindow::settingsActionTriggered);
 
     // Connect signals from the board manager
@@ -107,17 +114,17 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
 // ************************* TEXT-RELATED FUNCTIONS ************************ //
 void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting){
 
+    // Update the announcement label
     if (!boardManager->status) {
         ui->announcementLbl->setText("Not connected to the server");
         return;
     }
-
-    // Update the announcement label
-    if (settings.value("mode", "Local") == "Local")
-        ui->announcementLbl->setText("Player " + QString::number(nextPlayer + 1) + "'s Turn.");
-    else {
-        if (nextPlayer == boardManager->playerNum) {
-            ui->announcementLbl->setText("Your Turn!");
+    else if (boardManager->running) {
+        if (settings.value("mode", "Local") == "Local") {
+            ui->announcementLbl->setText("Player " + QString::number(nextPlayer + 1) + "'s Turn.");
+        }
+        else if (nextPlayer == boardManager->playerNum) {
+                ui->announcementLbl->setText("Your Turn!");
         }
         else {
             ui->announcementLbl->setText("Opponent's Turn.");
@@ -134,11 +141,11 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
         ui->printLbl->setText("");
 
         if (waiting) {
-            ui->announcementLbl->setText("Waiting for a game...");
+            ui->announcementLbl->setText("Waiting for an opponent...");
             ui->gameBtn->setText("Quit");
         }
         else {
-            ui->gameBtn->setText("Start Game");
+            ui->gameBtn->setText("New Game");
             switch (flag) {
 
                 case 0x0:
@@ -215,16 +222,53 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
 
 // *************************** EVENT HANDLERS ************************ //
 void MainWindow::gameBtnClicked(){
-    // Tries to end the game
+    // Tries to end the running game
     if (boardManager->running || boardManager->waiting) {
         boardManager->quitGame();
     }
 
-    // Tries to start a game
+    // Otherwise, closes the game state frame and shows the game settings again
     else {
-        boardManager->gameType = 0;
-        boardManager->startGame();
+        ui->gameStateFrame->hide();
+        ui->settingsFrame->show();
     }
+}
+
+// Tries to find a game for the player
+void MainWindow::findGameBtnClicked(){
+    // Update the settings
+    settings.setValue("mode", ui->gameTypeComboBox->currentText());
+    settings.setValue("url", ui->urlLineEdit->text());
+    settings.setValue("lobby_key", 0);
+
+    // Reconnect to the API server
+    ui->announcementLbl->setText("Connecting to the server...");
+    boardManager->reconnect();
+}
+
+// Tries to create a private lobby
+void MainWindow::createLobbyBtnClicked(){
+    // Update the settings
+    settings.setValue("mode", "Private Lobby");
+    settings.setValue("url", ui->urlLineEdit->text());
+    settings.setValue("lobby_key", 0);
+
+    // Reconnect to the API server
+    ui->announcementLbl->setText("Connecting to the server...");
+    boardManager->reconnect();
+}
+
+// Tries to join a private lobby
+void MainWindow::joinLobbyBtnClicked(){
+
+    // Update the settings
+    settings.setValue("mode", "Private Lobby");
+    settings.setValue("url", ui->urlLineEdit->text());
+    settings.setValue("lobby_key", ui->lobbyKeySpinBox->value());
+
+    // Reconnect to the API server
+    ui->announcementLbl->setText("Connecting to the server...");
+    boardManager->reconnect();
 }
 
 void MainWindow::settingsActionTriggered(){
@@ -283,6 +327,9 @@ void MainWindow::gamePieceReleased(QObject *object){
 // *************************** API RESPONSE HANDLERS ********************** //
 void MainWindow::connectedToBoard(){
     ui->announcementLbl->setText("Connected to Server.");
+
+    // Message the API server
+    boardManager->startGame();
 }
 
 void MainWindow::connectionErrorHandler(QString error) {
@@ -290,19 +337,26 @@ void MainWindow::connectionErrorHandler(QString error) {
     QMessageBox::critical(this, "Websocket Error", error);
 }
 
-void MainWindow::startGameResponseHandler(bool success, QString error, bool waiting, QString nextState, uint8_t nextPlayer, QHash<QPoint, QList<QPoint>> adjacentPieces){
+void MainWindow::startGameResponseHandler(bool success, QString error, bool waiting, uint64_t lobbyKey, QString nextState, uint8_t nextPlayer, QHash<QPoint, QList<QPoint>> adjacentPieces){
     // Update on screen text
     updateOnScreenText(nextState, nextPlayer, "", 0, waiting);
 
     if (!success) {
         qDebug() << "Error" << error;
+        QMessageBox::critical(this, "Error starting a new game", error);
         return;
     }
 
-    if (waiting) {
-//        QFile *file = new QFile(loadingGifPath);
-//        qDebug() << file->exists() << QDir::current().absolutePath();
+    // Closes the game settings frame and shows the game state again
+    ui->settingsFrame->hide();
+    ui->gameStateFrame->show();
 
+    if (lobbyKey != 0) {
+        QMessageBox::information(this, "Lobby Key", "Your Lobby Key is " + QString::number(lobbyKey));
+        qDebug() << "Your Lobby Key is" << lobbyKey;
+    }
+
+    if (waiting) {
         QMovie *movie = new QMovie(loadingGifPath);
         movie->setScaledSize(QSize(100, 100));
 
