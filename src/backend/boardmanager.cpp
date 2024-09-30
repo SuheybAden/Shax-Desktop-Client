@@ -14,9 +14,7 @@ BoardManager::BoardManager(QSettings *settings, QObject *parent)
     // Opens websocket connection to shax server
     mode = settings->value("mode", "Remote").toString();
     this->url = QUrl(settings->value("url", "ws://localhost:8765").toString());
-
-    websocket.open(url);
-    qDebug() << "Opened websocket";
+    this->lobbyKey = settings->value("lobby_key", 0).toUInt();
 
     // Connects all signals and slots
     connectSignals();
@@ -44,8 +42,9 @@ void BoardManager::sendMessage(QJsonObject msg){
 }
 
 void BoardManager::reconnect(){
-    mode = settings->value("mode", "Remote").toString();
+    this->mode = settings->value("mode", "Remote").toString();
     this->url = QUrl(settings->value("url", "ws://localhost:8765").toString());
+    this->lobbyKey = settings->value("lobby_key", 0).toUInt();
 
     websocket.open(url);
     qDebug() << "Attempting to reconnect...";
@@ -133,6 +132,7 @@ void BoardManager::startGame(){
     // Build the json message
     QJsonObject data;
     data["action"] = "join_game";
+
     if(mode == "Online") {
         data["game_type"] = 0;
     }
@@ -141,6 +141,15 @@ void BoardManager::startGame(){
     }
     else if(mode == "CPU") {
         data["game_type"] = 2;
+    }
+    else if(mode == "Private Lobby") {
+        if (lobbyKey != 0) {
+            data["game_type"] = (int)lobbyKey;
+        }
+        else {
+            qDebug() << "Creating a private lobby...";
+            data["game_type"] = 4;
+        }
     }
 
     // Send the message
@@ -213,6 +222,7 @@ void BoardManager::startGameResponseHandler(QJsonObject &data){
         QString error = data["error"].toString();
         bool isWaiting = data["waiting"].toBool();
         int num = data["player_num"].toInt();
+        uint64_t lobbyKey = data["lobby_key"].toInteger();
         QString nextState = data["next_state"].toString();
         int nextPlayer = data["next_player"].toInt();
 
@@ -252,7 +262,7 @@ void BoardManager::startGameResponseHandler(QJsonObject &data){
         playerNum = num;
         currentTurn = nextPlayer;
 
-        emit startGameResponded(success, error, isWaiting, nextState, nextPlayer, adjacentPieces);
+        emit startGameResponded(success, error, isWaiting, lobbyKey, nextState, nextPlayer, adjacentPieces);
 
     } catch (...) {
         qDebug() << "Received an unexpected response.\n";
