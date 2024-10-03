@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
         }
     }
     MainWindow w;
+    QApplication::setStyle("fusion");
     w.show();
     return a.exec();
 }

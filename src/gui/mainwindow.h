@@ -67,10 +67,13 @@ private:
 //    void closeEvent(QCloseEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
     void gamePieceReleased(QObject *object);
-    void gameBtnClicked();
+    void findGameBtnClicked();
+    void lobbyBtnClicked();
+    void backBtnClicked();
+    void startGameBtnClicked();
     void joinLobbyBtnClicked();
     void createLobbyBtnClicked();
-    void findGameBtnClicked();
+    void gameBtnClicked();
     void settingsActionTriggered();
 
 

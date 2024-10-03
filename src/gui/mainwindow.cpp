@@ -17,8 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 //    ui->printLbl->setVisible(false);
 
-    // Hide the game state related UI
-    ui->gameStateFrame->hide();
+    // Hide secondary ui
+    ui->gameInfoFrame->hide();
+    ui->startGameFrame->hide();
+    ui->lobbyFrame->hide();
 
     // Load settings values
     marginOfError = settings.value("marginOfError", 0.2).toFloat();
@@ -51,10 +53,14 @@ MainWindow::~MainWindow()
 // ************************** INIT FUNCTIONS ************************* //
 void MainWindow::connectAll(){
     // Connect signals from UI elements
-    QObject::connect(ui->gameBtn, &QPushButton::clicked, this, &MainWindow::gameBtnClicked);
+    QObject::connect(ui->findGameBtn, &QPushButton::clicked, this, &MainWindow::findGameBtnClicked);
+    QObject::connect(ui->lobbyBtn, &QPushButton::clicked, this, &MainWindow::lobbyBtnClicked);
+    QObject::connect(ui->backBtn1, &QPushButton::clicked, this, &MainWindow::backBtnClicked);
+    QObject::connect(ui->backBtn2, &QPushButton::clicked, this, &MainWindow::backBtnClicked);
+    QObject::connect(ui->startGameBtn, &QPushButton::clicked, this, &MainWindow::startGameBtnClicked);
     QObject::connect(ui->joinLobbyBtn, &QPushButton::clicked, this, &MainWindow::joinLobbyBtnClicked);
     QObject::connect(ui->createLobbyBtn, &QPushButton::clicked, this, &MainWindow::createLobbyBtnClicked);
-    QObject::connect(ui->findGameBtn, &QPushButton::clicked, this, &MainWindow::findGameBtnClicked);
+    QObject::connect(ui->gameBtn, &QPushButton::clicked, this, &MainWindow::gameBtnClicked);
     QObject::connect(ui->settingsAction, &QAction::triggered, this, &MainWindow::settingsActionTriggered);
 
     // Connect signals from the board manager
@@ -233,16 +239,34 @@ void MainWindow::gameBtnClicked(){
 
     // Otherwise, closes the game state frame and shows the game settings again
     else {
-        ui->gameStateFrame->hide();
-        ui->settingsFrame->show();
+        ui->gameInfoFrame->hide();
+        ui->actionsFrame->show();
     }
 }
 
-// Tries to find a game for the player
+// Switches the visible UI frame to the startGameFrame
 void MainWindow::findGameBtnClicked(){
+    ui->actionsFrame->hide();
+    ui->startGameFrame->show();
+}
+
+// Switches the visible UI frame to the lobbyFrame
+void MainWindow::lobbyBtnClicked(){
+    ui->actionsFrame->hide();
+    ui->lobbyFrame->show();
+}
+
+// Returns to the initial actionsFrame
+void MainWindow::backBtnClicked(){
+    ui->lobbyFrame->hide();
+    ui->startGameFrame->hide();
+    ui->actionsFrame->show();
+}
+
+// Tries to find a game for the player
+void MainWindow::startGameBtnClicked(){
     // Update the settings
     settings.setValue("mode", ui->gameTypeComboBox->currentText());
-    settings.setValue("url", ui->urlLineEdit->text());
     settings.setValue("lobby_key", 0);
 
     // Reconnect to the API server
@@ -254,7 +278,6 @@ void MainWindow::findGameBtnClicked(){
 void MainWindow::createLobbyBtnClicked(){
     // Update the settings
     settings.setValue("mode", "Private Lobby");
-    settings.setValue("url", ui->urlLineEdit->text());
     settings.setValue("lobby_key", 0);
 
     // Reconnect to the API server
@@ -267,7 +290,6 @@ void MainWindow::joinLobbyBtnClicked(){
 
     // Update the settings
     settings.setValue("mode", "Private Lobby");
-    settings.setValue("url", ui->urlLineEdit->text());
     settings.setValue("lobby_key", ui->lobbyKeySpinBox->value());
 
     // Reconnect to the API server
@@ -284,8 +306,6 @@ void MainWindow::settingsActionTriggered(){
         SettingsWindow settingsWindow(&(this->settings));
         if (settingsWindow.exec()){
             qDebug() << "Your settings were saved!\n";
-            ui->announcementLbl->setText("Reconnecting to the server...");
-            boardManager->reconnect();
         }
     }
 }
@@ -351,9 +371,10 @@ void MainWindow::startGameResponseHandler(bool success, QString error, bool wait
         return;
     }
 
-    // Closes the game settings frame and shows the game state again
-    ui->settingsFrame->hide();
-    ui->gameStateFrame->show();
+    // Shows the game info frame and hides the other frames
+    ui->gameInfoFrame->show();
+    ui->startGameFrame->hide();
+    ui->lobbyFrame->hide();
 
     if (waiting) {
         QMovie *movie = new QMovie(loadingGifPath);
