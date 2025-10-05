@@ -60,7 +60,7 @@ void GamePiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     else if (removable)
         painter->setPen(QPen(QColor(150, 0, 0), 3));
     else
-        painter->setPen(QPen(QColor(0,0,0), 1));
+        painter->setPen(QPen(color, 1));
 
 
     painter->setBrush(QBrush(color));

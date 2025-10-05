@@ -69,12 +69,12 @@ void MainWindow::connectAll(){
 }
 
 void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
-    playerColors[0] = QColor(220, 220, 220); //QColor(181, 189, 165);
-    playerColors[1] = QColor(50, 50, 50); //QColor(57, 61, 71);
+    playerColors[0] = QColor(140, 75, 50);
+    playerColors[1] = QColor(50, 50, 50);
 
-    QPen linesPen(colorBlack, penWidth);
-    QPen nodesPen(colorBlack, 2);
-    QBrush brush(QColor(170, 120, 80));
+    QPen linesPen(QColor(127,92,38), penWidth);
+    QPen nodesPen(QColor(127,92,38), 2);
+    QBrush nodesBrush(QColor(200, 180, 150));
 
     // Clears all items from the scene
     scene->clear();
@@ -102,7 +102,7 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
         float x = node.x() * gridSpacing;
         float y = node.y() * gridSpacing;
 
-        scene->addEllipse(x - radius, y - radius, radius * 2, radius * 2, nodesPen, brush);
+        scene->addEllipse(x - radius, y - radius, radius * 2, radius * 2, nodesPen, nodesBrush);
     }
 
     // Add an event filter to detect mouse button presses
