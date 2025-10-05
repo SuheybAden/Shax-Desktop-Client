@@ -17,11 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 //    ui->printLbl->setVisible(false);
 
-    // Hide secondary ui
-    ui->gameInfoFrame->hide();
-    ui->startGameFrame->hide();
-    ui->lobbyFrame->hide();
-
     // Load settings values
     marginOfError = settings.value("marginOfError", 0.2).toFloat();
     mode = settings.value("mode", "Remote").toString();
@@ -239,28 +234,23 @@ void MainWindow::gameBtnClicked(){
 
     // Otherwise, closes the game state frame and shows the game settings again
     else {
-        ui->gameInfoFrame->hide();
-        ui->actionsFrame->show();
+        ui->stackedWidget->setCurrentWidget(ui->actionsFrame_page);
     }
 }
 
 // Switches the visible UI frame to the startGameFrame
 void MainWindow::findGameBtnClicked(){
-    ui->actionsFrame->hide();
-    ui->startGameFrame->show();
+    ui->stackedWidget->setCurrentWidget(ui->startGameFrame_page);
 }
 
 // Switches the visible UI frame to the lobbyFrame
 void MainWindow::lobbyBtnClicked(){
-    ui->actionsFrame->hide();
-    ui->lobbyFrame->show();
+    ui->stackedWidget->setCurrentWidget(ui->lobbyFrame_page);
 }
 
 // Returns to the initial actionsFrame
 void MainWindow::backBtnClicked(){
-    ui->lobbyFrame->hide();
-    ui->startGameFrame->hide();
-    ui->actionsFrame->show();
+    ui->stackedWidget->setCurrentWidget(ui->actionsFrame_page);
 }
 
 // Tries to find a game for the player
@@ -372,9 +362,7 @@ void MainWindow::startGameResponseHandler(bool success, QString error, bool wait
     }
 
     // Shows the game info frame and hides the other frames
-    ui->gameInfoFrame->show();
-    ui->startGameFrame->hide();
-    ui->lobbyFrame->hide();
+    ui->stackedWidget->setCurrentWidget(ui->gameInfoFrame_page);
 
     if (waiting) {
         QMovie *movie = new QMovie(loadingGifPath);

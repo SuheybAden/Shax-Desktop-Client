@@ -41,6 +41,8 @@ private:
     QGraphicsProxyWidget *loadingWidget;
     QSettings settings = QSettings("SA LLC", "Shax Desktop Client");
 
+    QWidget currentFrame;
+
     float marginOfError;
     QString mode;
     QString url;
