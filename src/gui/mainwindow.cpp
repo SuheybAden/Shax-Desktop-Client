@@ -235,23 +235,23 @@ void MainWindow::gameBtnClicked(){
 
     // Otherwise, closes the game state frame and shows the game settings again
     else {
-        animatePageTransition(ui->actionsFrame_page);
+        animatePageTransition(ui->actionsFrame_page, LEFT);
     }
 }
 
 // Switches the visible UI frame to the startGameFrame
 void MainWindow::findGameBtnClicked(){
-    animatePageTransition(ui->startGameFrame_page);
+    animatePageTransition(ui->startGameFrame_page, RIGHT);
 }
 
 // Switches the visible UI frame to the lobbyFrame
 void MainWindow::lobbyBtnClicked(){
-    animatePageTransition(ui->lobbyFrame_page);
+    animatePageTransition(ui->lobbyFrame_page, RIGHT);
 }
 
 // Returns to the initial actionsFrame
 void MainWindow::backBtnClicked(){
-    animatePageTransition(ui->actionsFrame_page);
+    animatePageTransition(ui->actionsFrame_page, LEFT);
 }
 
 // Tries to find a game for the player
@@ -301,7 +301,7 @@ void MainWindow::settingsButtonClicked(){
     }
 }
 
-void MainWindow::animatePageTransition(QWidget *next){
+void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
     QWidget *current = ui->stackedWidget->currentWidget();
 
     if (!current || !next || current == next){
@@ -311,20 +311,20 @@ void MainWindow::animatePageTransition(QWidget *next){
     int w = ui->stackedWidget->width();
 
     // Start position: slide in from right
-    next->setGeometry(w, 0, w, ui->stackedWidget->height());
+    next->setGeometry((transitionFrom * 2 - 1) * w, 0, w, ui->stackedWidget->height());
     next->show();
 
     // Animate current widget sliding out to the left
     QPropertyAnimation *animCurrent = new QPropertyAnimation(current, "geometry");
     animCurrent->setDuration(300);
     animCurrent->setStartValue(QRect(0, 0, w, ui->stackedWidget->height()));
-    animCurrent->setEndValue(QRect(-w, 0, w, ui->stackedWidget->height()));
+    animCurrent->setEndValue(QRect((transitionFrom * 2 - 1) * -w, 0, w, ui->stackedWidget->height()));
     animCurrent->setEasingCurve(QEasingCurve::InOutQuad);
 
     // Animate next widget sliding in
     QPropertyAnimation *animNext = new QPropertyAnimation(next, "geometry");
     animNext->setDuration(300);
-    animNext->setStartValue(QRect(w, 0, w, ui->stackedWidget->height()));
+    animNext->setStartValue(QRect((transitionFrom * 2 - 1) * w, 0, w, ui->stackedWidget->height()));
     animNext->setEndValue(QRect(0, 0, w, ui->stackedWidget->height()));
     animNext->setEasingCurve(QEasingCurve::InOutQuad);
 
@@ -400,7 +400,7 @@ void MainWindow::startGameResponseHandler(bool success, QString error, bool wait
     }
 
     // Shows the game info frame and hides the other frames
-    animatePageTransition(ui->gameInfoFrame_page);
+    animatePageTransition(ui->gameInfoFrame_page, RIGHT);
 
     if (waiting) {
         QMovie *movie = new QMovie(loadingGifPath);

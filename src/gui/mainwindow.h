@@ -15,6 +15,11 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+typedef enum {
+    LEFT,
+    RIGHT
+} Direction;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -77,7 +82,7 @@ private:
     void createLobbyBtnClicked();
     void gameBtnClicked();
     void settingsButtonClicked();
-    void animatePageTransition(QWidget *nextWidget);
+    void animatePageTransition(QWidget *nextWidget, Direction transitionFrom);
 
 
     // On screen text methods
