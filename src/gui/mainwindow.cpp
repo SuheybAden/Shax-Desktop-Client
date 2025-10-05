@@ -56,7 +56,7 @@ void MainWindow::connectAll(){
     QObject::connect(ui->joinLobbyBtn, &QPushButton::clicked, this, &MainWindow::joinLobbyBtnClicked);
     QObject::connect(ui->createLobbyBtn, &QPushButton::clicked, this, &MainWindow::createLobbyBtnClicked);
     QObject::connect(ui->gameBtn, &QPushButton::clicked, this, &MainWindow::gameBtnClicked);
-    QObject::connect(ui->settingsAction, &QAction::triggered, this, &MainWindow::settingsActionTriggered);
+    QObject::connect(ui->settingsButton, &QToolButton::clicked, this, &MainWindow::settingsButtonClicked);
 
     // Connect signals from the board manager
     QObject::connect(boardManager, &BoardManager::connected, this, &MainWindow::connectedToBoard);
@@ -225,7 +225,7 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
     }
 }
 
-// *************************** EVENT HANDLERS ************************ //
+// *************************** UI EVENT HANDLERS ************************ //
 void MainWindow::gameBtnClicked(){
     // Tries to end the running game
     if (boardManager->running || boardManager->waiting) {
@@ -287,7 +287,7 @@ void MainWindow::joinLobbyBtnClicked(){
     boardManager->reconnect();
 }
 
-void MainWindow::settingsActionTriggered(){
+void MainWindow::settingsButtonClicked(){
     if (boardManager->running || boardManager->waiting)
         QMessageBox::critical(this, "Ongoing Game", "The current game must be finished before editing the settings.");
 

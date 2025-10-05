@@ -23,67 +23,97 @@
    <iconset theme="input-gaming"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="8,2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="8,0">
+     <layout class="QVBoxLayout" name="gameWindowLayout">
       <item>
-       <layout class="QVBoxLayout" name="gameWindowLayout">
-        <item>
-         <widget class="QLabel" name="announcementLbl">
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>18</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Start a Game</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::TextFormat::AutoText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGraphicsView" name="graphicsView">
-          <property name="mouseTracking">
-           <bool>true</bool>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Shape::Box</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Shadow::Sunken</enum>
-          </property>
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="renderHints">
-           <set>QPainter::RenderHint::Antialiasing|QPainter::RenderHint::TextAntialiasing</set>
-          </property>
-          <property name="dragMode">
-           <enum>QGraphicsView::DragMode::NoDrag</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="printLbl">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QLabel" name="announcementLbl">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>18</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Start a Game</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::TextFormat::AutoText</enum>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGraphicsView" name="graphicsView">
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Sunken</enum>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="renderHints">
+         <set>QPainter::RenderHint::Antialiasing|QPainter::RenderHint::TextAntialiasing</set>
+        </property>
+        <property name="dragMode">
+         <enum>QGraphicsView::DragMode::NoDrag</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="printLbl">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Policy::Minimum</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item alignment="Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter">
+       <widget class="QToolButton" name="settingsButton">
+        <property name="layoutDirection">
+         <enum>Qt::LayoutDirection::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../images.qrc">
+          <normaloff>:/images/settings-icon.png</normaloff>:/images/settings-icon.png</iconset>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
@@ -112,7 +142,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>199</height>
+              <height>173</height>
              </size>
             </property>
            </spacer>
@@ -141,7 +171,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>22</height>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -161,7 +191,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>199</height>
+              <height>173</height>
              </size>
             </property>
            </spacer>
@@ -501,23 +531,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>820</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Setti&amp;ngs</string>
-    </property>
-    <addaction name="settingsAction"/>
-   </widget>
-   <addaction name="menuSettings"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="settingsAction">
    <property name="text">
@@ -528,6 +541,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

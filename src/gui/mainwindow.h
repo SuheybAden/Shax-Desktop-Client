@@ -76,7 +76,7 @@ private:
     void joinLobbyBtnClicked();
     void createLobbyBtnClicked();
     void gameBtnClicked();
-    void settingsActionTriggered();
+    void settingsButtonClicked();
 
 
     // Update methods
