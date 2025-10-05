@@ -65,7 +65,7 @@ private:
     void connectAll();
     void initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces);
 
-    // Event handlers
+    // UI Event handlers
 //    void closeEvent(QCloseEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
     void gamePieceReleased(QObject *object);
@@ -77,9 +77,10 @@ private:
     void createLobbyBtnClicked();
     void gameBtnClicked();
     void settingsButtonClicked();
+    void animatePageTransition(QWidget *nextWidget);
 
 
-    // Update methods
+    // On screen text methods
     void updateOnScreenText(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting);
 
     // Board translation methods
