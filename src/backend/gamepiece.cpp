@@ -1,5 +1,7 @@
 #include "gamepiece.h"
 #include <QGraphicsScene>
+#include <QPropertyAnimation>
+#include <QGraphicsBlurEffect>
 
 
 GamePiece::GamePiece(uint16_t ID, float x, float y, float radius, QColor color)
@@ -16,9 +18,7 @@ GamePiece::GamePiece(uint16_t ID, float x, float y, float radius, QColor color)
 
     setPos(homePos);
 
-    GamePiece::setAcceptTouchEvents(true);
-    setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    animateDropIn(radius);
 
     // Initialize the piece's animation
     timer = new QTimeLine(300);
@@ -102,4 +102,40 @@ void GamePiece::movePiece(int16_t x, int16_t y){
     animation->setPosAt(1, homePos);
 
     timer->start();
+}
+
+// ********************************** ANIMATIONS ******************************** //
+void GamePiece::animateDropIn(float radius){
+    // Add a blur effect to the game piece
+    QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect();
+    blurEffect->setBlurHints(QGraphicsBlurEffect::QualityHint);
+    this->setGraphicsEffect(blurEffect);
+    
+    // Have the game piece come into focus as it's dropped in
+    QPropertyAnimation *focusAnimation = new QPropertyAnimation(blurEffect, "blurRadius");
+    focusAnimation->setDuration(dropInTime);
+    focusAnimation->setStartValue(7);
+    focusAnimation->setEndValue(0);
+    focusAnimation->setEasingCurve(QEasingCurve::OutQuad);
+
+    // Have the game piece reduce to it's actual size as it's dropped in
+    QPropertyAnimation *dropAnimation = new QPropertyAnimation(this, "scale");
+    dropAnimation->setDuration(dropInTime);
+    dropAnimation->setStartValue(4.0);
+    dropAnimation->setEndValue(1.0);
+    dropAnimation->setEasingCurve(QEasingCurve::OutBounce);
+
+    QObject::connect(dropAnimation, &QPropertyAnimation::finished, [=]() {
+        dropAnimation->deleteLater();
+        focusAnimation->deleteLater();
+        // TODO: Look into if I need to disconnect the blur effect before deleting it
+        blurEffect->deleteLater();
+
+        GamePiece::setAcceptTouchEvents(true);
+        setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
+        setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    });
+
+    dropAnimation->start();
+    focusAnimation->start();
 }

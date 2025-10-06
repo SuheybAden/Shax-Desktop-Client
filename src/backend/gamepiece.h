@@ -21,6 +21,7 @@ public:
     QColor color;
     QPointF homePos;
     QPointF currentPos;
+    int dropInTime = 700;
 
     void activate(bool isMovable);
     void deactivate();
@@ -45,6 +46,9 @@ private:
     // Animation variables
     QTimeLine *timer;
     QGraphicsItemAnimation *animation;
-};
+
+    // Animations
+    void animateDropIn(float radius);
+ };
 
 #endif // GAMEPIECE_H
