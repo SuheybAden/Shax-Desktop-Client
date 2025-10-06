@@ -317,14 +317,14 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
     next->setGraphicsEffect(fadeIn);
 
     // Start position: slide in from right
-    next->setGeometry((transitionFrom * 2 - 1) * w, 0, w, ui->stackedWidget->height());
+    next->setGeometry(transitionFrom * w, 0, w, ui->stackedWidget->height());
     next->show();
 
     // Animate current widget sliding out and fading out
     QPropertyAnimation *animCurrent = new QPropertyAnimation(current, "geometry");
     animCurrent->setDuration(transitionTime);
     animCurrent->setStartValue(QRect(0, 0, w, ui->stackedWidget->height()));
-    animCurrent->setEndValue(QRect((transitionFrom * 2 - 1) * -w, 0, w, ui->stackedWidget->height()));
+    animCurrent->setEndValue(QRect(transitionFrom * -w, 0, w, ui->stackedWidget->height()));
     animCurrent->setEasingCurve(QEasingCurve::InOutQuad);
 
     QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOut, "opacity");
@@ -336,7 +336,7 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
     // Animate next widget sliding in and fading in
     QPropertyAnimation *animNext = new QPropertyAnimation(next, "geometry");
     animNext->setDuration(transitionTime);
-    animNext->setStartValue(QRect((transitionFrom * 2 - 1) * w, 0, w, ui->stackedWidget->height()));
+    animNext->setStartValue(QRect(transitionFrom * w, 0, w, ui->stackedWidget->height()));
     animNext->setEndValue(QRect(0, 0, w, ui->stackedWidget->height()));
     animNext->setEasingCurve(QEasingCurve::InOutQuad);
 
@@ -347,6 +347,8 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
     fadeInAnimation->setEasingCurve(QEasingCurve::OutQuad);
 
 
+    // Delete any data related to the animation once it has completed
+    // Update the current page in the stackedWidget and hide the previous page
     QObject::connect(animNext, &QPropertyAnimation::finished, [=]() {
         ui->stackedWidget->setCurrentWidget(next);
         current->hide();
@@ -358,6 +360,7 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
         fadeOutAnimation->deleteLater();
     });
 
+    // Start all the animations
     animCurrent->start();
     animNext->start();
     fadeInAnimation->start();

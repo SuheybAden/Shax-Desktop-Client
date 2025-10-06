@@ -16,8 +16,8 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 typedef enum {
-    LEFT,
-    RIGHT
+    LEFT = -1,
+    RIGHT = 1
 } Direction;
 
 class MainWindow : public QMainWindow
