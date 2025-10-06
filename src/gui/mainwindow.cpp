@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QDir>
 #include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -308,35 +309,59 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
         return;
     }
 
+    int transitionTime = 400;
     int w = ui->stackedWidget->width();
+    QGraphicsOpacityEffect *fadeIn = new QGraphicsOpacityEffect();
+    QGraphicsOpacityEffect *fadeOut = new QGraphicsOpacityEffect();
+    current->setGraphicsEffect(fadeOut);
+    next->setGraphicsEffect(fadeIn);
 
     // Start position: slide in from right
     next->setGeometry((transitionFrom * 2 - 1) * w, 0, w, ui->stackedWidget->height());
     next->show();
 
-    // Animate current widget sliding out to the left
+    // Animate current widget sliding out and fading out
     QPropertyAnimation *animCurrent = new QPropertyAnimation(current, "geometry");
-    animCurrent->setDuration(300);
+    animCurrent->setDuration(transitionTime);
     animCurrent->setStartValue(QRect(0, 0, w, ui->stackedWidget->height()));
     animCurrent->setEndValue(QRect((transitionFrom * 2 - 1) * -w, 0, w, ui->stackedWidget->height()));
     animCurrent->setEasingCurve(QEasingCurve::InOutQuad);
 
-    // Animate next widget sliding in
+    QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOut, "opacity");
+    fadeOutAnimation->setDuration(transitionTime);
+    fadeOutAnimation->setStartValue(1.0);
+    fadeOutAnimation->setEndValue(0.0);
+    fadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
+
+    // Animate next widget sliding in and fading in
     QPropertyAnimation *animNext = new QPropertyAnimation(next, "geometry");
-    animNext->setDuration(300);
+    animNext->setDuration(transitionTime);
     animNext->setStartValue(QRect((transitionFrom * 2 - 1) * w, 0, w, ui->stackedWidget->height()));
     animNext->setEndValue(QRect(0, 0, w, ui->stackedWidget->height()));
     animNext->setEasingCurve(QEasingCurve::InOutQuad);
+
+    QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeIn, "opacity");
+    fadeInAnimation->setDuration(transitionTime);
+    fadeInAnimation->setStartValue(0.0);
+    fadeInAnimation->setEndValue(1.0);
+    fadeInAnimation->setEasingCurve(QEasingCurve::OutQuad);
+
 
     QObject::connect(animNext, &QPropertyAnimation::finished, [=]() {
         ui->stackedWidget->setCurrentWidget(next);
         current->hide();
         animCurrent->deleteLater();
         animNext->deleteLater();
+        fadeIn->deleteLater();
+        fadeOut->deleteLater();
+        fadeInAnimation->deleteLater();
+        fadeOutAnimation->deleteLater();
     });
 
     animCurrent->start();
     animNext->start();
+    fadeInAnimation->start();
+    fadeOutAnimation->start();
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent *event){
