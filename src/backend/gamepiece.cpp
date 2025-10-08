@@ -62,10 +62,19 @@ void GamePiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     else
         painter->setPen(QPen(color, 1));
 
-
     painter->setBrush(QBrush(color));
 
     painter->drawEllipse(rect);
+    
+    QRectF highlightRect = QRectF(0,0,rect.width() * sheenColorRatio, rect.height() * sheenColorRatio);
+    QPointF center = rect.center();
+    highlightRect.moveCenter(rect.center());
+
+    QColor highlightColor = color.lighter(150);
+    painter->setPen(QPen(highlightColor, 2));
+    painter->setBrush(QBrush(highlightColor));
+
+    painter->drawArc(highlightRect, 120*16, 120*16);
 }
 
 

@@ -21,7 +21,10 @@ public:
     QColor color;
     QPointF homePos;
     QPointF currentPos;
+
+    // Visual Parameters
     int dropInTime = 700;
+    float sheenColorRatio = 0.8;
 
     void activate(bool isMovable);
     void deactivate();
