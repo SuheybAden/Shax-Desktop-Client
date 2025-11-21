@@ -407,7 +407,10 @@
           <item>
            <widget class="QPushButton" name="backBtn2">
             <property name="text">
-             <string>&lt; Back</string>
+             <string>Back</string>
+            </property>
+            <property name="icon">
+             <iconset theme="QIcon::ThemeIcon::GoPrevious"/>
             </property>
            </widget>
           </item>
@@ -491,7 +494,10 @@
           <item>
            <widget class="QPushButton" name="backBtn1">
             <property name="text">
-             <string>&lt; Back</string>
+             <string>Back</string>
+            </property>
+            <property name="icon">
+             <iconset theme="QIcon::ThemeIcon::GoPrevious"/>
             </property>
            </widget>
           </item>
