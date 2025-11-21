@@ -62,6 +62,7 @@ private:
     QColor colorBlack;
     QColor colorRed;
     QColor colorBlue;
+    int pageTransitionTime = 200;
 
     QHash<QPoint, QList<QPoint>> adjacentPieces;
     QHash<uint16_t,GamePiece*> gamePieces;
@@ -82,6 +83,7 @@ private:
     void createLobbyBtnClicked();
     void gameBtnClicked();
     void settingsButtonClicked();
+    void saveSettingsButtonClicked();
     void animatePageTransition(QWidget *nextWidget, Direction transitionFrom);
 
 

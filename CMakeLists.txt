@@ -19,9 +19,6 @@ set(PROJECT_SOURCES
         src/gui/mainwindow.cpp
         src/gui/mainwindow.h
         src/gui/mainwindow.ui
-        src/gui/settingswindow.h
-        src/gui/settingswindow.cpp
-        src/gui/settingswindow.ui
         ${TS_FILES}
 )
 

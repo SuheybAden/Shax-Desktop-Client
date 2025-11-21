@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "settingswindow.h"
 
 #include <QCloseEvent>
 #include <QMessageBox>
@@ -54,11 +53,13 @@ void MainWindow::connectAll(){
     QObject::connect(ui->lobbyBtn, &QPushButton::clicked, this, &MainWindow::lobbyBtnClicked);
     QObject::connect(ui->backBtn1, &QPushButton::clicked, this, &MainWindow::backBtnClicked);
     QObject::connect(ui->backBtn2, &QPushButton::clicked, this, &MainWindow::backBtnClicked);
+    QObject::connect(ui->backBtn3, &QPushButton::clicked, this, &MainWindow::backBtnClicked);
     QObject::connect(ui->startGameBtn, &QPushButton::clicked, this, &MainWindow::startGameBtnClicked);
     QObject::connect(ui->joinLobbyBtn, &QPushButton::clicked, this, &MainWindow::joinLobbyBtnClicked);
     QObject::connect(ui->createLobbyBtn, &QPushButton::clicked, this, &MainWindow::createLobbyBtnClicked);
     QObject::connect(ui->gameBtn, &QPushButton::clicked, this, &MainWindow::gameBtnClicked);
-    QObject::connect(ui->settingsButton, &QToolButton::clicked, this, &MainWindow::settingsButtonClicked);
+    QObject::connect(ui->settingsBtn, &QPushButton::clicked, this, &MainWindow::settingsButtonClicked);
+    QObject::connect(ui->saveSettingsBtn, &QPushButton::clicked, this, &MainWindow::saveSettingsButtonClicked);
 
     // Connect signals from the board manager
     QObject::connect(boardManager, &BoardManager::connected, this, &MainWindow::connectedToBoard);
@@ -290,16 +291,18 @@ void MainWindow::joinLobbyBtnClicked(){
 }
 
 void MainWindow::settingsButtonClicked(){
-    if (boardManager->running || boardManager->waiting)
-        QMessageBox::critical(this, "Ongoing Game", "The current game must be finished before editing the settings.");
+    // Update the settings values shown
+    ui->urlLineEdit->setText(settings.value("url", "ws://localhost:8765").toString());
 
-    else {
-        qDebug() << "Opened the settings window.\n";
-        SettingsWindow settingsWindow(&(this->settings));
-        if (settingsWindow.exec()){
-            qDebug() << "Your settings were saved!\n";
-        }
-    }
+    // Transition to the settings page
+    animatePageTransition(ui->settings_page, RIGHT);
+}
+
+// Save the user's settings
+void MainWindow::saveSettingsButtonClicked(){
+    settings.setValue("url", ui->urlLineEdit->text());
+
+    QMessageBox::information(this, "Saved Settings", "Your settings have been saved!");
 }
 
 void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
@@ -309,7 +312,6 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
         return;
     }
 
-    int transitionTime = 400;
     int w = ui->stackedWidget->width();
     QGraphicsOpacityEffect *fadeIn = new QGraphicsOpacityEffect();
     QGraphicsOpacityEffect *fadeOut = new QGraphicsOpacityEffect();
@@ -322,26 +324,26 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
 
     // Animate current widget sliding out and fading out
     QPropertyAnimation *animCurrent = new QPropertyAnimation(current, "geometry");
-    animCurrent->setDuration(transitionTime);
+    animCurrent->setDuration(pageTransitionTime);
     animCurrent->setStartValue(QRect(0, 0, w, ui->stackedWidget->height()));
     animCurrent->setEndValue(QRect(transitionFrom * -w, 0, w, ui->stackedWidget->height()));
     animCurrent->setEasingCurve(QEasingCurve::InOutQuad);
 
     QPropertyAnimation *fadeOutAnimation = new QPropertyAnimation(fadeOut, "opacity");
-    fadeOutAnimation->setDuration(transitionTime);
+    fadeOutAnimation->setDuration(pageTransitionTime);
     fadeOutAnimation->setStartValue(1.0);
     fadeOutAnimation->setEndValue(0.0);
     fadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
 
     // Animate next widget sliding in and fading in
     QPropertyAnimation *animNext = new QPropertyAnimation(next, "geometry");
-    animNext->setDuration(transitionTime);
+    animNext->setDuration(pageTransitionTime);
     animNext->setStartValue(QRect(transitionFrom * w, 0, w, ui->stackedWidget->height()));
     animNext->setEndValue(QRect(0, 0, w, ui->stackedWidget->height()));
     animNext->setEasingCurve(QEasingCurve::InOutQuad);
 
     QPropertyAnimation *fadeInAnimation = new QPropertyAnimation(fadeIn, "opacity");
-    fadeInAnimation->setDuration(transitionTime);
+    fadeInAnimation->setDuration(pageTransitionTime);
     fadeInAnimation->setStartValue(0.0);
     fadeInAnimation->setEndValue(1.0);
     fadeInAnimation->setEasingCurve(QEasingCurve::OutQuad);
