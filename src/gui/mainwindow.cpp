@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    ui->printLbl->setVisible(false);
 
     // Load settings values
     marginOfError = settings.value("marginOfError", 0.2).toFloat();
@@ -142,14 +141,13 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
     // Game state related UI updates
     if (nextState == "STOPPED") {
         ui->gameStateLbl->setText("Game Stopped");
-        ui->printLbl->setText("");
 
         if (waiting) {
             ui->announcementLbl->setText("Waiting for an opponent...");
             ui->gameBtn->setText("Quit");
 
             if(boardManager->lobbyKey != 0) {
-                ui->printLbl->setText("Your lobby key is " + QString::number(boardManager->lobbyKey));
+                ui->statusbar->showMessage("Your lobby key is " + QString::number(boardManager->lobbyKey));
             }
         }
         else {
@@ -215,16 +213,16 @@ void MainWindow::updateOnScreenText(QString nextState, int nextPlayer, QString m
     }
     else if (nextState == "PLACEMENT"){
         ui->gameStateLbl->setText("Placement Stage");
-        ui->printLbl->setText("Click on a node to place a piece.");
+        ui->statusbar->showMessage("Click on a node to place a piece.");
         ui->gameBtn->setText("Quit");
     }
     else if (nextState == "REMOVAL" || nextState == "FIRST_REMOVAL"){
         ui->gameStateLbl->setText("Removal Stage");
-        ui->printLbl->setText("Click on a piece to remove");
+        ui->statusbar->showMessage("Click on a piece to remove");
     }
     else if (nextState == "MOVEMENT"){
         ui->gameStateLbl->setText("Movement Stage");
-        ui->printLbl->setText("Drag one of your pieces to an adjacent spot");
+        ui->statusbar->showMessage("Drag one of your pieces to an adjacent spot");
     }
 }
 

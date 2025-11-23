@@ -64,20 +64,10 @@
          <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
         </property>
         <property name="renderHints">
-         <set>QPainter::RenderHint::Antialiasing|QPainter::RenderHint::TextAntialiasing</set>
+         <set>QPainter::RenderHint::Antialiasing|QPainter::RenderHint::SmoothPixmapTransform|QPainter::RenderHint::TextAntialiasing</set>
         </property>
         <property name="dragMode">
          <enum>QGraphicsView::DragMode::NoDrag</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="printLbl">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -179,6 +169,19 @@
           <property name="spacing">
            <number>10</number>
           </property>
+          <item>
+           <spacer name="verticalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item>
            <widget class="QLabel" name="gameStateLbl">
             <property name="font">
@@ -301,7 +304,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>304</height>
+              <height>40</height>
              </size>
             </property>
            </spacer>
