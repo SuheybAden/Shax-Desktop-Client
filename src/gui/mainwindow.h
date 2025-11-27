@@ -54,15 +54,24 @@ private:
 
     BoardManager *boardManager;
 
+    // Default Settings
+    const float marginOfError_default = 0.2;
+    const QString mode_default = "Remote";
+    const QString url_default = "ws://localhost:8765";
+
     // Graphics parameters
     float radius = 15;
     float penWidth = 3;
     float gridSpacing = 70;
-    QColor playerColors[2];
-    QColor colorBlack;
-    QColor colorRed;
-    QColor colorBlue;
     int pageTransitionTime = 200;
+
+    QColor playerColors[2];
+    QColor p1_color = QColor(140, 75, 50);
+    QColor p2_color = QColor(50, 50, 50);
+
+    QColor linesColor = QColor(127,92,38);
+    QBrush nodesBrush = QBrush(QColor(200, 180, 150));
+    int nodesBorderThickness = 2;
 
     QHash<QPoint, QList<QPoint>> adjacentPieces;
     QHash<uint16_t,GamePiece*> gamePieces;

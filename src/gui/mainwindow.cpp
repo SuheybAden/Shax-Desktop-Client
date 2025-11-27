@@ -18,14 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Load settings values
-    marginOfError = settings.value("marginOfError", 0.2).toFloat();
-    mode = settings.value("mode", "Remote").toString();
-    url = settings.value("url", "ws://localhost:8765").toString();
-
-    // Initialize colors
-    colorBlack = QColor(0, 0, 0);
-    colorRed = QColor(150, 0, 0);
-    colorBlue = QColor(0, 0, 150);
+    marginOfError = settings.value("marginOfError", marginOfError_default).toFloat();
+    mode = settings.value("mode", mode_default).toString();
+    url = settings.value("url", url_default).toString();
 
     // Add a blank scene to the graphics view
     scene = new QGraphicsScene();
@@ -71,12 +66,11 @@ void MainWindow::connectAll(){
 }
 
 void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
-    playerColors[0] = QColor(140, 75, 50);
-    playerColors[1] = QColor(50, 50, 50);
+    playerColors[0] = p1_color;
+    playerColors[1] = p2_color;
 
-    QPen linesPen(QColor(127,92,38), penWidth);
-    QPen nodesPen(QColor(127,92,38), 2);
-    QBrush nodesBrush(QColor(200, 180, 150));
+    QPen linesPen(linesColor, penWidth);
+    QPen nodesPen(linesColor, nodesBorderThickness);
 
     // Clears all items from the scene
     scene->clear();
