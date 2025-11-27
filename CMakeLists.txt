@@ -28,6 +28,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         src/backend/boardmanager.h src/backend/boardmanager.cpp
         src/backend/gamepiece.h src/backend/gamepiece.cpp
+        src/backend/node.h src/backend/node.cpp
         images.qrc
     )
 # Define target properties for Android with Qt 6 as:

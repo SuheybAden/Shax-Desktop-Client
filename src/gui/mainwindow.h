@@ -82,8 +82,8 @@ private:
 
     // UI Event handlers
 //    void closeEvent(QCloseEvent *event);
-    bool eventFilter(QObject *object, QEvent *event);
     void gamePieceReleased(QObject *object);
+    void nodeClickedHandler(QObject *object);
     void findGameBtnClicked();
     void lobbyBtnClicked();
     void backBtnClicked();

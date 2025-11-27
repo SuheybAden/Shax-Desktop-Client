@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "../backend/node.h"
 
 #include <QCloseEvent>
 #include <QMessageBox>
@@ -93,16 +94,17 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
 
     // Draw the nodes themselves
     for (auto i = adjacentPieces.cbegin(), end = adjacentPieces.cend(); i != end; ++i) {
-        QPoint node = i.key();
+        QPoint p = i.key();
 
-        float x = node.x() * gridSpacing;
-        float y = node.y() * gridSpacing;
+        float x = p.x() * gridSpacing;
+        float y = p.y() * gridSpacing;
 
-        scene->addEllipse(x - radius, y - radius, radius * 2, radius * 2, nodesPen, nodesBrush);
+        Node *node = new Node(x, y, radius, nodesPen, nodesBrush);
+
+        connect(node, &Node::nodeClicked, this, &MainWindow::nodeClickedHandler);
+
+        scene->addItem(node);
     }
-
-    // Add an event filter to detect mouse button presses
-    ui->graphicsView->installEventFilter(this);
 
     qDebug() << "Finished drawing the board.\n";
 }
@@ -361,23 +363,16 @@ void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
     fadeOutAnimation->start();
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event){
-//    qDebug() << "Event type: " << event->type() << "Object type: " << object->objectName();
-
-    if (event->type() == QEvent::MouseButtonPress && boardManager->gameState == GameState::PLACEMENT) {
-        QMouseEvent *mouseEvent = (QMouseEvent *)event;
-        QPointF pos = ui->graphicsView->mapToScene(mouseEvent->pos());
-        QPoint boardPos = sceneToBoard(pos);
-
-        boardManager->placePiece(boardPos.x(), boardPos.y());
-        event->accept();
-        return true;
+void MainWindow::nodeClickedHandler(QObject *object) {
+    if(boardManager->gameState != GameState::PLACEMENT) {
+        return;
     }
 
-    return false;
-//    return QMainWindow::eventFilter(object, event);
-}
+    Node *node = (Node *)object;
 
+    QPoint boardPos = sceneToBoard(node->nodePos);
+    boardManager->placePiece(boardPos.x(), boardPos.y());
+}
 
 void MainWindow::gamePieceReleased(QObject *object){
     GamePiece *piece = (GamePiece *)object;
