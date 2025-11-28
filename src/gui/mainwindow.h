@@ -97,7 +97,8 @@ private:
 
 
     // On screen text methods
-    void updateOnScreenText(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting);
+    void updateIdleUI();
+    void updateGameInfoUI(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting);
 
     // Board translation methods
     QPoint sceneToBoard(QPointF scenePoint);
