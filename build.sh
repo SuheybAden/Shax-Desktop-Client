@@ -42,4 +42,7 @@ fi
 cmake -DCMAKE_BUILD_TYPE=$build_type -B ./build
 cmake --build ./build/ --config $build_type
 
+# Update .ts file
+cmake --build ./build/ --target update_translations
+
 chmod +x ./build/shax-desktop-client
