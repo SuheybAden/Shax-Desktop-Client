@@ -121,11 +121,11 @@ void MainWindow::updateIdleUI(){
     // Update the announcement for when the user isn't on the gameInfoFrame
     if (ui->gameInfoFrame_page != current) {
         if (!boardManager->status) {
-            ui->announcementLbl->setText("SERVOR ERROR!");
-            ui->statusbar->showMessage("ERROR: Not connected to the server!");
+            ui->announcementLbl->setText(tr("SERVOR ERROR!"));
+            ui->statusbar->showMessage(tr("ERROR: Not connected to the server!"));
         }
         else {
-            ui->announcementLbl->setText("Start a New Game!");
+            ui->announcementLbl->setText(tr("Start a New Game!"));
         }
     }
 }
@@ -134,13 +134,13 @@ void MainWindow::updateIdleUI(){
 void MainWindow::updateGameInfoUI(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting){
     // Tell the user who the next player is
     if (settings.value("mode", "Local") == "Local") {
-        ui->announcementLbl->setText("Player " + QString::number(nextPlayer + 1) + "'s Turn.");
+        ui->announcementLbl->setText(tr("Player %1's Turn.").arg(QString::number(nextPlayer + 1)));
     }
     else if (nextPlayer == boardManager->playerNum) {
-        ui->announcementLbl->setText("Your Turn!");
+        ui->announcementLbl->setText(tr("Your Turn!"));
     }
     else {
-        ui->announcementLbl->setText("Opponent's Turn.");
+        ui->announcementLbl->setText(tr("Opponent's Turn."));
     }
     
     // Update the count of player tokens
@@ -149,47 +149,47 @@ void MainWindow::updateGameInfoUI(QString nextState, int nextPlayer, QString msg
 
     // Game state related UI updates
     if (nextState == "PLACEMENT"){
-        ui->gameStateLbl->setText("Place a Piece");
-        ui->gameBtn->setText("Quit");
+        ui->gameStateLbl->setText(tr("Place a Piece"));
+        ui->gameBtn->setText(tr("Quit"));
     }
     else if (nextState == "REMOVAL" || nextState == "FIRST_REMOVAL"){
-        ui->gameStateLbl->setText("Remove a Piece");
+        ui->gameStateLbl->setText(tr("Remove a Piece"));
     }
     else if (nextState == "MOVEMENT"){
-        ui->gameStateLbl->setText("Move a Piece");
+        ui->gameStateLbl->setText(tr("Move a Piece"));
     }
     else if (nextState == "STOPPED") {
         if (waiting) {
-            ui->announcementLbl->setText("Waiting for an opponent...");
-            ui->gameStateLbl->setText("In Queue...");
-            ui->gameBtn->setText("Quit");
+            ui->announcementLbl->setText(tr("Waiting for an opponent..."));
+            ui->gameStateLbl->setText(tr("In Queue..."));
+            ui->gameBtn->setText(tr("Quit"));
 
             if(boardManager->lobbyKey != 0) {
-                ui->statusbar->showMessage("Your lobby key is " + QString::number(boardManager->lobbyKey));
+                ui->statusbar->showMessage(tr("Your lobby key is %1").arg(QString::number(boardManager->lobbyKey)));
             }
         }
         else {
-            ui->gameStateLbl->setText("Game Over");
-            ui->gameBtn->setText("New Game");
+            ui->gameStateLbl->setText(tr("Game Over"));
+            ui->gameBtn->setText(tr("New Game"));
 
             // The player quit from the waiting list
             if (flag == 0x1){
-                ui->announcementLbl->setText("You've exited the waiting list!");
+                ui->announcementLbl->setText(tr("You've exited the waiting list!"));
             }
 
             // One of the player's won
             else if (flag == 0x2) {
                 // If it's a local game, clarify which player won using their player number
                 if (settings.value("mode", "Local") == "Local") {
-                    ui->announcementLbl->setText("Player " + QString::number(boardManager->winner + 1) + " Won!");
+                    ui->announcementLbl->setText(tr("Player %1 Won!").arg(QString::number(boardManager->winner + 1)));
                 }
                 // Otherwise, just clarify whether the user or their opponent forfeited
                 else {
                     if (boardManager->winner == boardManager->playerNum) {
-                        ui->announcementLbl->setText("You Won!");
+                        ui->announcementLbl->setText(tr("You Won!"));
                     }
                     else {
-                        ui->announcementLbl->setText("You Lost");
+                        ui->announcementLbl->setText(tr("You Lost"));
                     }
                 }
             }
@@ -198,15 +198,15 @@ void MainWindow::updateGameInfoUI(QString nextState, int nextPlayer, QString msg
             else if (flag == 0x3) {
                 // If it's a local game, clarify which player won using their player number
                 if (settings.value("mode", "Local") == "Local") {
-                    ui->announcementLbl->setText("Player " + QString::number(boardManager->currentTurn + 1) + " Forfeited");
+                    ui->announcementLbl->setText(tr("Player %1 Forfeited").arg(QString::number(boardManager->currentTurn + 1)));
                 }
                 // Otherwise, just clarify whether the user or their opponent forfeited
                 else {
                     if (boardManager->winner == boardManager->playerNum) {
-                        ui->announcementLbl->setText("Your Opponent Forfeited");
+                        ui->announcementLbl->setText(tr("Your Opponent Forfeited"));
                     }
                     else {
-                        ui->announcementLbl->setText("You Forfeited");
+                        ui->announcementLbl->setText(tr("You Forfeited"));
                     }
                 }
             }
@@ -214,16 +214,16 @@ void MainWindow::updateGameInfoUI(QString nextState, int nextPlayer, QString msg
             // One of the player's disconnected
             else if (flag == 0x4) {
                 if (settings.value("mode", "Local") != "Local" && boardManager->winner == boardManager->playerNum) {
-                    ui->announcementLbl->setText("Your Opponent Disconnected");
+                    ui->announcementLbl->setText(tr("Your Opponent Disconnected"));
                 }
                 else {
-                    ui->announcementLbl->setText("Lost connection to the server");
+                    ui->announcementLbl->setText(tr("Lost connection to the server"));
                 }
             }
 
             // Unkown state
             else {
-                ui->announcementLbl->setText("Game ended in an unknown state");
+                ui->announcementLbl->setText(tr("Game ended in an unknown state"));
             }
         }
     }
@@ -264,7 +264,7 @@ void MainWindow::startGameBtnClicked(){
     settings.setValue("lobby_key", 0);
 
     // Reconnect to the API server
-    ui->announcementLbl->setText("Connecting to the server...");
+    ui->announcementLbl->setText(tr("Connecting to the server..."));
     boardManager->reconnect();
 }
 
@@ -275,7 +275,7 @@ void MainWindow::createLobbyBtnClicked(){
     settings.setValue("lobby_key", 0);
 
     // Reconnect to the API server
-    ui->announcementLbl->setText("Connecting to the server...");
+    ui->announcementLbl->setText(tr("Connecting to the server..."));
     boardManager->reconnect();
 }
 
@@ -287,7 +287,7 @@ void MainWindow::joinLobbyBtnClicked(){
     settings.setValue("lobby_key", ui->lobbyKeySpinBox->value());
 
     // Reconnect to the API server
-    ui->announcementLbl->setText("Connecting to the server...");
+    ui->announcementLbl->setText(tr("Connecting to the server..."));
     boardManager->reconnect();
 }
 
@@ -303,7 +303,7 @@ void MainWindow::settingsButtonClicked(){
 void MainWindow::saveSettingsButtonClicked(){
     settings.setValue("url", ui->urlLineEdit->text());
 
-    QMessageBox::information(this, "Saved Settings", "Your settings have been saved!");
+    QMessageBox::information(this, tr("Saved Settings"), tr("Your settings have been saved!"));
 }
 
 void MainWindow::animatePageTransition(QWidget *next, Direction transitionFrom){
@@ -404,14 +404,14 @@ void MainWindow::gamePieceReleased(QObject *object){
 
 // *************************** API RESPONSE HANDLERS ********************** //
 void MainWindow::connectedToBoard(){
-    ui->announcementLbl->setText("Connected to Server.");
+    ui->announcementLbl->setText(tr("Connected to Server."));
 
     // Message the API server
     boardManager->startGame();
 }
 
 void MainWindow::connectionErrorHandler(QString error) {
-    ui->announcementLbl->setText("Error connecting to server");
+    ui->announcementLbl->setText(tr("Error connecting to server"));
     QMessageBox::critical(this, "Websocket Error", error);
 }
 
@@ -421,7 +421,7 @@ void MainWindow::startGameResponseHandler(bool success, QString error, bool wait
 
     if (!success) {
         qDebug() << "Error" << error;
-        QMessageBox::critical(this, "Error starting a new game", error);
+        QMessageBox::critical(this, tr("Error starting a new game"), error);
         return;
     }
 
