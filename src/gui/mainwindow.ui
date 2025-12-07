@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Shax Client</string>
   </property>
   <property name="windowIcon">
    <iconset theme="input-gaming"/>
