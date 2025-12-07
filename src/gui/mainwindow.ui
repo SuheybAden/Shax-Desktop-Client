@@ -36,7 +36,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Start a Game</string>
+         <string>Start a New Game!</string>
         </property>
         <property name="textFormat">
          <enum>Qt::TextFormat::AutoText</enum>
