@@ -18,6 +18,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Load the Somali translation file
+    if(!translator.load(":/i18n/shax-desktop-client_so_SO")) {
+        qDebug() << "Failed to load the Somali translation file!";
+    }
+
     // Load settings values
     marginOfError = settings.value("marginOfError", marginOfError_default).toFloat();
     mode = settings.value("mode", mode_default).toString();
@@ -111,6 +116,19 @@ void MainWindow::initBoard(QHash<QPoint, QList<QPoint>> adjacentPieces){
 
 
 // ************************* TEXT-RELATED FUNCTIONS ************************ //
+void MainWindow::changeLanguage(QString languageName){
+    if(languageName == "Somali") {
+        qApp->installTranslator(&translator);
+        qDebug() << "Set the display language to Somali";
+    }
+    else {
+        qApp->removeTranslator(&translator);
+        qDebug() << "Set the display language to English";
+    }
+
+    ui->retranslateUi(this);
+}
+
 
 // Updates any text related to when there isn't a game running
 // Ex: when in the settings menu, selecting a game mode, etc.
@@ -294,6 +312,7 @@ void MainWindow::joinLobbyBtnClicked(){
 void MainWindow::settingsButtonClicked(){
     // Update the settings values shown
     ui->urlLineEdit->setText(settings.value("url", "ws://localhost:8765").toString());
+    ui->language_comboBox->setCurrentText(settings.value("language", "English").toString());
 
     // Transition to the settings page
     animatePageTransition(ui->settings_page, RIGHT);
@@ -302,6 +321,10 @@ void MainWindow::settingsButtonClicked(){
 // Save the user's settings
 void MainWindow::saveSettingsButtonClicked(){
     settings.setValue("url", ui->urlLineEdit->text());
+    settings.setValue("language", ui->language_comboBox->currentText());
+
+    // Retranslate the UI if necessary
+    changeLanguage(ui->language_comboBox->currentText());
 
     QMessageBox::information(this, tr("Saved Settings"), tr("Your settings have been saved!"));
 }

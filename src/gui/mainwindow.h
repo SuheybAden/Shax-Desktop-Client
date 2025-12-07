@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTranslator>
 #include <QSettings>
 #include <QPointF>
 #include <QPoint>
@@ -40,6 +41,8 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QTranslator translator;
 
     const QString loadingGifPath = ":/images/loading.gif";
     QGraphicsScene *scene;
@@ -97,6 +100,7 @@ private:
 
 
     // On screen text methods
+    void changeLanguage(QString languageName);
     void updateIdleUI();
     void updateGameInfoUI(QString nextState, int nextPlayer, QString msg, uint8_t flag, bool waiting);
 
